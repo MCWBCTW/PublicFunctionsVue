@@ -1,13 +1,76 @@
 <template>
-    <div>
-        test
+    <div class="main flex">
+        <div class="menu">
+            <div class="menu-item flex flex-a-c flex-j-c" v-for="item in menuArray" :key="item.id" @click="handleChoiceTabs(item)">
+                <span class="menu-item-label">{{ item.label }}</span>
+            </div>
+        </div>
+        <div class="content">
+            <router-view></router-view>
+        </div>
     </div>
-  </template>
+</template>
   
-  <script setup lang="ts">
+<script setup lang="ts">
+ 
+    interface Imenu {
+        path: string
+        id: number
+        active: boolean
+        label: string
+    }
+    const menuArray: Array<Imenu> = reactive([
+        {
+            path: '/',
+            id: 1,
+            active: false,
+            label: '大文件上传'
+        },
+        {
+            path: '/vidoeWebRTC',
+            id: 1,
+            active: false,
+            label: 'webRTC视频通话'
+        }
+    ])
     
-  </script>
+    // 点击菜单项回调
+    function handleChoiceTabs(item: Imenu){
+
+    }
+</script>
   
-  <style>
-  
-  </style>
+<style scoped>
+    .main {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+    .menu {
+        width: 10%;
+        height: 100%;
+        overflow-y: scroll;
+        display: flex;
+        flex-direction: column;
+        background-color: #2f3e62;
+    }
+    .menu::-webkit-scrollbar { 
+        width: 0 !important 
+    }
+    .menu-item {
+        width: 100%;
+        height: 50px;
+        cursor: pointer;
+    }
+    .menu-item:hover {
+        background-color: rgb(38, 50, 78);
+    }
+    .menu-item-label {
+        font-size: 18px;
+        color: #ffffff;
+    }
+    .content {
+        width: 90%;
+        height: 100vh;
+    }
+</style>

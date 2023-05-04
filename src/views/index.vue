@@ -5,13 +5,15 @@
                 <span class="menu-item-label">{{ item.label }}</span>
             </div>
         </div>
-        <div class="content">
+        <div class="content flex flex-a-c flex-j-c">
             <router-view></router-view>
         </div>
     </div>
 </template>
   
 <script setup lang="ts">
+    import { useRouter } from "vue-router"
+    const router = useRouter()
  
     interface Imenu {
         path: string
@@ -36,7 +38,7 @@
     
     // 点击菜单项回调
     function handleChoiceTabs(item: Imenu){
-
+        router.push({ path: item.path})
     }
 </script>
   

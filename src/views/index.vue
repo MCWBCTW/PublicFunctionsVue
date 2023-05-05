@@ -30,7 +30,7 @@
         },
         {
             path: '/vidoeWebRTC',
-            id: 1,
+            id: 2,
             active: false,
             label: 'webRTC视频通话'
         }

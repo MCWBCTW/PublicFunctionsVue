@@ -1,5 +1,7 @@
 <template>
     <input id="input" type="file" @change="choiceFile">
+
+    <button @click="upload">上传文件</button>
 </template>
 
 
@@ -7,15 +9,29 @@
 
     import SparkMD5 from 'spark-md5'
 
+    import { CreateRequest } from '../../utils/tool'
+
+    // 定义单个文件切片的数据规范
+    interface ISingleFile {
+        file: FormData
+        index: Number
+        name: String
+        mark: String
+    }
+
+    // 储存文件切片数组
+    let fileArray: Array<ISingleFile> = [];
+
+
     // 选择文件
     function choiceFile(){
         let input = document.getElementById('input') as HTMLInputElement;
-        console.log(input.files)
-        let fileArray: Array<Blob> = [];
         if(input.files !== null){
-            fileArray = splitFile(input.files[0], 1);
+            splitFile(input.files[0], 1).then(res => {
+                fileArray = res;
+                console.log(fileArray)
+            })
         }
-        console.log(fileArray)
     }
 
 
@@ -24,12 +40,12 @@
      * @param file 需要分片的文件
      * @param splitSize 每一片文件的大小，默认为1M
      */
-    function splitFile(file: File, splitSize: number = 1):Array<Blob>{
+    async function splitFile(file: File, splitSize: number = 1):Promise<Array<ISingleFile>>{
         const single: number = 1024 * 1024 * splitSize; // 单个切片的大小
-        
-        const { size, type } = file; // 当前文件的大小
 
-        let result: Array<Blob> = []; // 返回的文件切片数组
+        const { size, type, name } = file; // 当前文件的大小
+
+        let result: Array<ISingleFile> = []; // 返回的文件切片数组
         
         for(let i = 0; i < size; i += single){
             let start = i; // 切片开始的位置
@@ -37,7 +53,19 @@
 
             let itemFile: Blob = file.slice(start, end, type); // 文件切片
 
-            result.push(itemFile)
+            let form = new FormData()
+            form.append(type, itemFile)
+            let item: ISingleFile = {
+                file: form,
+                index: i,
+                name: name + `-${i}`,
+                mark: '',
+            }
+
+            let pro = await generateFileMark(itemFile).then(res => {
+                item.mark = res as string;
+                result.push(item);
+            });
         }
         return result
     }
@@ -59,6 +87,21 @@
                 resolve(md5 + Date.now());
             };
         });
+    }
+
+
+    async function upload(){
+        if(fileArray.length == 0){
+            alert('请先选择需要上传的文件')
+            return
+        }
+        fileArray.forEach(item => {
+            CreateRequest('POST', '/post/uploadFile', item).then(res => {
+                console.log(res)
+            }).catch(err => {
+                console.log(err)
+            })
+        })
     }
 </script>
 

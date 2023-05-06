@@ -15,7 +15,12 @@ const routes: Array<RouteRecordRaw> = [
             path: '/vidoeWebRTC',
             name: 'vidoeWebRTC',
             component: () => import('../views/children/vidoeWebRTC.vue'),
-        },
+          },
+          {
+            path: '/virtualScrolling',
+            name: 'virtualScrolling',
+            component: () => import('../views/children/virtualScrolling.vue'),
+          },
       ]
     },
 ]

@@ -25,7 +25,7 @@
         {
             path: '/',
             id: 1,
-            active: false,
+            active: true,
             label: '大文件上传'
         },
         {
@@ -33,6 +33,12 @@
             id: 2,
             active: false,
             label: 'webRTC视频通话'
+        },
+        {
+            path: '/virtualScrolling',
+            id: 3,
+            active: false,
+            label: '虚拟滚动'
         }
     ])
     

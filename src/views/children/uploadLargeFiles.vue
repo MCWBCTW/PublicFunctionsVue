@@ -9,7 +9,7 @@
 
     import SparkMD5 from 'spark-md5'
 
-    import { CreateRequest } from '../../utils/tool'
+    import { CreateRequest } from '../../utils/request'
 
     // 定义单个文件切片的数据规范
     interface ISingleFile {
@@ -96,7 +96,7 @@
             return
         }
         fileArray.forEach(item => {
-            CreateRequest('POST', '/post/uploadFile', item).then(res => {
+            CreateRequest('POST', '/post/uploadFile', {file: item.file}, {'content-type': 'multipart/form-data'}).then(res => {
                 console.log(res)
             }).catch(err => {
                 console.log(err)

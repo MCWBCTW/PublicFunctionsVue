@@ -34,7 +34,8 @@ export function CreateRequest(method: string, url: string, data?: object, header
             baseURL: REQUEST_HTTP,
             method,
             url,
-            data,
+            data: method == 'POST' ? data : null,
+            params: method == 'GET' ? data : null,
             timeout: 1000,
             headers,
         }).then(res => {

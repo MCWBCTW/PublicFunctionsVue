@@ -6,8 +6,9 @@
     <div class="schedule">
         <span>上传进度：</span>
         <div class="line">
-
+            <div class="line-success" :style="{width: `${value * 4}px`}"></div>
         </div>
+        <span>{{ value }}%</span>
     </div>
 </template>
 
@@ -18,13 +19,8 @@
 
     import { CreateRequest } from '../../utils/request'
 
-    // 定义单个文件切片的数据规范
-    interface ISingleFile {
-        file: FormData
-        index: Number
-        name: String
-        mark: String
-    }
+    // 上传完成的进度值
+    let value: Ref<number> = ref(0);
 
     // 储存文件切片数组
     let fileArray: Array<FormData> = [];
@@ -104,12 +100,14 @@
             alert('请先选择需要上传的文件')
             return
         }
+        value.value = 0;
         fileArray.forEach(item => {
             CreateRequest('POST', '/post/uploadFile', item).then((res: any) => {
-                console.log(res)
                 let index: number = fileHashArray.indexOf(res.data.hash)
                 fileHashArray.splice(index, 1);
+                value.value = (fileHashArray.length/fileArray.length);
                 if(fileHashArray.length === 0){
+                    value.value = 100;
                     mergeFile(res.data.filename)
                 }
             }).catch(err => {
@@ -142,8 +140,15 @@
     .line {
         width: 400px;
         height: 10px;
-        background-color: gold;
+        background-color: gray;
         border-radius: 10px;
         position: relative;
+    }
+    .line-success {
+        height: 10px;
+        background-color: gold;
+        border-radius: 10px;
+        position: absolute;
+        top: 0;
     }
 </style>

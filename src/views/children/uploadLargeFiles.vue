@@ -1,7 +1,14 @@
 <template>
-    <input id="input" type="file" @change="choiceFile">
+    <div>
+        <input id="input" type="file" @change="choiceFile">
+        <button @click="upload">上传文件</button>
+    </div>
+    <div class="schedule">
+        <span>上传进度：</span>
+        <div class="line">
 
-    <button @click="upload">上传文件</button>
+        </div>
+    </div>
 </template>
 
 
@@ -126,5 +133,17 @@
 
 
 <style scoped>
-    
+    .schedule {
+        margin-top: 100px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+    .line {
+        width: 400px;
+        height: 10px;
+        background-color: gold;
+        border-radius: 10px;
+        position: relative;
+    }
 </style>

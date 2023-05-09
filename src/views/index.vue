@@ -5,7 +5,7 @@
                 <span class="menu-item-label">{{ item.label }}</span>
             </div>
         </div>
-        <div class="content flex flex-a-c flex-j-c">
+        <div class="content flex flex-d-c flex-a-c flex-j-c">
             <router-view></router-view>
         </div>
     </div>

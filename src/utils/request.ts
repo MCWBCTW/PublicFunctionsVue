@@ -39,7 +39,7 @@ export function CreateRequest(method: string, url: string, data?: object, header
             timeout: 1000,
             headers,
         }).then(res => {
-            if(res.data.code == 200){
+            if(res.status == 200){
                 resolve(res.data);
             } else {
                 reject(res.data);

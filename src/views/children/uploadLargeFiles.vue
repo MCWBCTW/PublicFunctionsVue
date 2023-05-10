@@ -28,6 +28,9 @@
     // 储存切片hash值
     let fileHashArray: Array<string> = [];
 
+    // 当前选中的文件，文件名
+    let filename: string = '';
+
     // 选择文件
     function choiceFile(){
         fileArray = []; // 文件切片置空
@@ -36,6 +39,7 @@
         if(input.files !== null){
             splitFile(input.files[0], 1).then(res => {
                 fileArray = res;
+                console.log(fileArray)
             })
         }
     }
@@ -51,6 +55,8 @@
 
         const { size, type, name } = file; // 当前文件的大小
 
+        filename = name; // 储存文件名称
+
         let result: Array<FormData> = []; // 返回的文件切片数组
         
         for(let i = 0; i < size; i += single){
@@ -60,7 +66,7 @@
             let itemFile: Blob = file.slice(start, end, type); // 文件切片
 
             let form = new FormData()
-            form.append('filename', file.name)
+            form.append('filename', name)
             form.append('chunk', itemFile)
             let pro = await generateFileMark(itemFile).then(res => {
                 form.append('hash', res as string)
@@ -101,19 +107,28 @@
             return
         }
         value.value = 0;
-        fileArray.forEach(item => {
-            CreateRequest('POST', '/post/uploadFile', item).then((res: any) => {
-                let index: number = fileHashArray.indexOf(res.data.hash)
-                fileHashArray.splice(index, 1);
-                value.value = (fileHashArray.length/fileArray.length);
-                if(fileHashArray.length === 0){
-                    value.value = 100;
-                    mergeFile(res.data.filename)
-                }
-            }).catch(err => {
-                console.log(err)
-            })
+        CreateRequest('GET', '/get/inspectFile', {filename}).then((res: any) => {
+            if (res.code == 202) {
+                // 文件未上传
+                fileArray.forEach(item => {
+                    CreateRequest('POST', '/post/uploadFile', item).then((res: any) => {
+                        // 文件切片正常上传
+                        let index: number = fileHashArray.indexOf(res.data.hash)
+                        fileHashArray.splice(index, 1);
+                        value.value = (fileHashArray.length/fileArray.length);
+                        if(fileHashArray.length === 0){
+                            mergeFile(res.data.filename)
+                        }
+                    }).catch(err => {
+                        console.log(err)
+                    })
+                })
+            } else if (res.code == 201) {
+                // 文件上传过，不需要再次上传
+                value.value = 100;
+            }
         })
+        
     }
 
 
@@ -122,7 +137,7 @@
      */
     function mergeFile(filename: string){
         CreateRequest('GET', '/get/mergeFile', {filename}).then(res => {
-            console.log(res)
+            value.value = 100;
         }).catch(err => {
             console.log(err)
         })

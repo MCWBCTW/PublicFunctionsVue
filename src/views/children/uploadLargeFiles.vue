@@ -1,7 +1,7 @@
 <template>
     <div>
         <input id="input" type="file" @change="choiceFile">
-        <button @click="upload">上传文件</button>
+        <button @click="handleUpload">上传文件</button>
     </div>
     <div class="schedule">
         <span>上传进度：</span>
@@ -25,6 +25,8 @@
     // 储存文件切片数组
     let fileArray: Array<FormData> = [];
 
+    // 上传失败的切片数组
+    let failUploadArray: Array<FormData> = [];
     // 储存切片hash值
     let fileHashArray: Array<string> = [];
 
@@ -99,9 +101,9 @@
 
 
     /**
-     * 上传文件切片
+     * 上传文件，校验当前文件是否已上传过
      */
-    function upload(){
+    function handleUpload(){
         if(fileArray.length == 0){
             alert('请先选择需要上传的文件')
             return
@@ -110,24 +112,39 @@
         CreateRequest('GET', '/get/inspectFile', {filename}).then((res: any) => {
             if (res.code == 202) {
                 // 文件未上传
-                fileArray.forEach(item => {
-                    CreateRequest('POST', '/post/uploadFile', item).then((res: any) => {
-                        // 文件切片正常上传
-                        let index: number = fileHashArray.indexOf(res.data.hash)
-                        fileHashArray.splice(index, 1);
-                        value.value = (fileHashArray.length/fileArray.length);
-                        if(fileHashArray.length === 0){
-                            mergeFile(res.data.filename)
-                        }
-                    }).catch(err => {
-                        console.log(err)
-                    })
-                })
+                uploadFile(fileArray)
             } else if (res.code == 201) {
                 // 文件上传过，不需要再次上传
                 value.value = 100;
             }
         })
+        
+    }
+
+
+    /**
+     * 
+     * @param data 上传的文件切片数组
+     */
+    async function uploadFile(files: Array<FormData>){
+
+        for (let i = 0; i < files.length; i++){
+            let result = await CreateRequest('POST', '/post/uploadFile', files[i]).then((res: any) => {
+                // 文件切片正常上传
+                let index: number = fileHashArray.indexOf(res.data.hash)
+                fileHashArray.splice(index, 1);
+                value.value = (fileHashArray.length/fileArray.length);
+                if(fileHashArray.length === 0){
+                    mergeFile(res.data.filename)
+                }
+            }).catch(err => {
+                failUploadArray.push(files[i])
+                if(i == files.length - 1 && failUploadArray.length){
+                    uploadFile(JSON.parse(JSON.stringify(failUploadArray))); // 将失败的文件切片重新上传
+                    failUploadArray = []; // 置空失败的文件切片
+                }
+            })
+        }
         
     }
 

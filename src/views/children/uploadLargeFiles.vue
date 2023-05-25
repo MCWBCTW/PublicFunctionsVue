@@ -41,7 +41,6 @@
         if(input.files !== null){
             splitFile(input.files[0], 1).then(res => {
                 fileArray = res;
-                console.log(fileArray)
             })
         }
     }
@@ -92,8 +91,8 @@
             reader.onload = (e: any) => {
                 spark.appendBinary(e.target.result);
                 const md5: string = spark.end();
-                const hash: string = md5 + Date.now()
-                fileHashArray.push(hash)
+                const hash: string = md5 + Date.now();
+                fileHashArray.push(hash);
                 resolve(hash);
             };
         });
@@ -112,7 +111,7 @@
         CreateRequest('GET', '/get/inspectFile', {filename}).then((res: any) => {
             if (res.code == 202) {
                 // 文件未上传
-                uploadFile(fileArray)
+                uploadFile(fileArray);
             } else if (res.code == 201) {
                 // 文件上传过，不需要再次上传
                 value.value = 100;
@@ -127,15 +126,14 @@
      * @param data 上传的文件切片数组
      */
     async function uploadFile(files: Array<FormData>){
-
         for (let i = 0; i < files.length; i++){
             let result = await CreateRequest('POST', '/post/uploadFile', files[i]).then((res: any) => {
                 // 文件切片正常上传
-                let index: number = fileHashArray.indexOf(res.data.hash)
+                let index: number = fileHashArray.indexOf(res.data.hash);
                 fileHashArray.splice(index, 1);
-                value.value = (fileHashArray.length/fileArray.length);
+                value.value = Number(((1 - (fileHashArray.length/fileArray.length)) * 100).toFixed(2));
                 if(fileHashArray.length === 0){
-                    mergeFile(res.data.filename)
+                    mergeFile(res.data.filename);
                 }
             }).catch(err => {
                 failUploadArray.push(files[i])
@@ -145,7 +143,6 @@
                 }
             })
         }
-        
     }
 
 
@@ -159,6 +156,19 @@
             console.log(err)
         })
     }
+
+
+    watch(value, (newV) => {
+        if(newV == 100){
+            // 文件已上传完成，清除已上传的文件
+            let input = document.getElementById('input') as HTMLInputElement;
+            if(input.files !== null){
+                input.files = null;
+                input.value = '';
+                fileArray = [];
+            }
+        }
+    })
 </script>
 
 

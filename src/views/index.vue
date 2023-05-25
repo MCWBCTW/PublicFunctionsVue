@@ -6,7 +6,11 @@
             </div>
         </div>
         <div class="content flex flex-d-c flex-a-c flex-j-c">
-            <router-view></router-view>
+            <router-view v-slot="{ Component }">
+                <keep-alive>
+                    <component :is="Component" />
+                </keep-alive>
+            </router-view>
         </div>
     </div>
 </template>
@@ -46,6 +50,10 @@
     function handleChoiceTabs(item: Imenu){
         router.push({ path: item.path})
     }
+
+
+    // 缓存的组件
+    const includeList: Array<string> = ['virtualScrolling'];
 </script>
   
 <style scoped>

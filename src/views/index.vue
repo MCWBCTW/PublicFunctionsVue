@@ -42,7 +42,13 @@
             path: '/virtualScrolling',
             id: 3,
             active: false,
-            label: '虚拟滚动'
+            label: '虚拟滚动（一）'
+        },
+        {
+            path: '/virtualScrollingSecond',
+            id: 4,
+            active: false,
+            label: '虚拟滚动（二）'
         }
     ])
     

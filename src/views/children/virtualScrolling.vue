@@ -1,8 +1,8 @@
 <template>
     <div class="wrapper" @scroll="contentScroll">
         <div class="background" :style="{height:`${ contentHeight }px`}"></div>
-        <div class="list">
-            <div class="line" v-for="item in data.data" :key="item.id">
+        <div class="list" :style="{transform: `translateY(${scrollTop}px)`}">
+            <div class="line" v-for="item in ergodicData.data" :key="item.id" :style="{height: `${lineHeight}px`}">
                 <span>{{ item.id }}</span>
                 <span>{{ item.msg }}</span>
             </div>
@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
     import { CreateRequest } from '../../utils/request'
-    
+
     interface Idata {
         data: Array<baseData>
     }
@@ -21,39 +21,37 @@
         id: number
         msg: string
     }
-
-    let data: Idata = reactive({data: []});
-
-    let contentHeight: Ref<number> = ref(0);
+    let scrollTop: Ref<number> = ref(0); // 滚动隐藏的高度
+    let data: Idata = reactive({data: []}); // 全部数据数组
+    let ergodicData: Idata = reactive({data: []}); // 遍历的数组
+    let lineHeight: number = 50; // 单项行高
+    let contentHeight: Ref<number> = ref(0); // 全部数据列表应占高度
 
     function getData () {
         CreateRequest('GET', '/get/oneHundredThousand').then((res: any) => {
-            // if(data.data.length == 0){
-            //     data.data = res.data;
-            // }
-            for(let i = 0; i < 100; i++){
-                data.data.push({
-                    id: i,
-                    msg: Math.random() + ''
-                })
+            if(data.data.length == 0){
+                data.data = res.data;
             }
-            contentHeight.value = 100000 * 50;
+            contentHeight.value = data.data.length * 50;
+            ergodicData.data = data.data.slice(0, 16)
         })
     }
 
     getData();
+
 
     /**
      * 单条数据高度为 50 px
      * 数据长度为十万条，列表总高度 5000000 px
      * 
      */
-
-    
     function contentScroll(e: any){
         let top: number = e.srcElement.scrollTop;
+        let start = Math.round(top / lineHeight);
+        let end = start + 16;
+        ergodicData.data = data.data.slice(start, end)
+        scrollTop.value = top;
     }
-
 
     /**
      * 二分查找法
@@ -78,7 +76,6 @@
         }
         return -1
     }
-    console.log(binarySearch([1,2,3,4,5,6,7,8,9], 8))
 
 </script>
 
@@ -108,7 +105,6 @@
     }
     .line {
         width: 500px;
-        height: 50px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;

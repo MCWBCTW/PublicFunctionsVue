@@ -33,6 +33,15 @@ const routes: Array<RouteRecordRaw> = [
                     keepAlive: true,
                 }
             },
+            {
+                path: '/virtualScrollingSecond',
+                name: 'virtualScrollingSecond',
+                component: () => import('../views/children/virtualScrollingSecond.vue'),
+                meta: {
+                    requireAuth: true,
+                    keepAlive: true,
+                }
+            },
         ]
     },
 ]

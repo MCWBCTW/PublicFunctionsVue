@@ -49,6 +49,12 @@
             id: 4,
             active: false,
             label: '虚拟滚动（二）'
+        },
+        {
+            path: '/popup',
+            id: 4,
+            active: false,
+            label: '全局弹窗'
         }
     ])
     

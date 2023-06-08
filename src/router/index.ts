@@ -42,6 +42,15 @@ const routes: Array<RouteRecordRaw> = [
                     keepAlive: true,
                 }
             },
+            {
+                path: '/popup',
+                name: 'popup',
+                component: () => import('../views/children/popup.vue'),
+                meta: {
+                    requireAuth: true,
+                    keepAlive: true,
+                }
+            },
         ]
     },
 ]

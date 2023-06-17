@@ -1,13 +1,10 @@
 <template>
-    <div>
-        popup
-    </div>
+    <button>messgae</button>
     <message></message>
 </template>
 
 
 <script lang="ts" setup>
-import message from '../../components/message.vue';
 
 </script>
 

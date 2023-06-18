@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper" @scroll="contentScroll">
-        <div class="pillar" :style="{height: `${data.length * lineHeight}px`}"></div>
-        <div class="list">
+        <div class="pillar" :style="{height: `${data.data.length * lineHeight}px`}"></div>
+        <div class="list" :style="{transform: `translateY(${transformY}px)`}">
             <div class="line" :style="{height: `${lineHeight}px`}" v-for="item in ergodicData.data" :key="item.id">
                 <span>{{ item.id }}</span>
                 <span>{{ item.msg }}</span>
@@ -14,6 +14,11 @@
 <script setup lang="ts">
     import { CreateRequest } from '../../utils/request'
 
+    onActivated(() => {
+        transformY.value = 0;
+        ergodicData.data = data.data.slice(0, 16)
+    })
+
     const lineHeight: number = 50;
 
     interface Idata {
@@ -23,24 +28,28 @@
         id: number
         msg: string
     }
-    let data: Array<baseData> = []; // 全部数据数组
+    let data: Idata = reactive({data: []}); // 页面遍历的数据
+
 
     let ergodicData: Idata = reactive({data: []}); // 页面遍历的数据
 
     function getData () {
         CreateRequest('GET', '/get/oneHundredThousand').then((res: any) => {
-            if(data.length == 0){
-                data = res.data;
-            }
-            console.log(data)
+            data.data = res.data;
+            ergodicData.data = data.data.slice(0, 20);
         })
     }
 
     getData();
 
 
-    function contentScroll(e: any) {
+    let transformY: Ref<number> = ref(0);
 
+    function contentScroll(e: any) {
+        let top = e.srcElement.scrollTop;
+        transformY.value = top - (top % 50);
+        let hiddenNum = Math.floor(top / lineHeight);
+        ergodicData.data = data.data.slice(hiddenNum, hiddenNum + 20);
     }
 </script>
 

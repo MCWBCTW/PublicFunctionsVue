@@ -14,6 +14,10 @@
 <script setup lang="ts">
     import { CreateRequest } from '../../utils/request'
 
+    onActivated(() => {
+        scrollTop.value = 0;
+        ergodicData.data = data.data.slice(0, 16)
+    })
     interface Idata {
         data: Array<baseData>
     }
@@ -29,9 +33,7 @@
 
     function getData () {
         CreateRequest('GET', '/get/oneHundredThousand').then((res: any) => {
-            if(data.data.length == 0){
-                data.data = res.data;
-            }
+            data.data = res.data;
             contentHeight.value = data.data.length * 50;
             ergodicData.data = data.data.slice(0, 16)
         })
@@ -53,29 +55,6 @@
         scrollTop.value = top;
     }
 
-    /**
-     * 二分查找法
-     * 
-     * @param arr 目标数组
-     * @param target 需要查询的目标值
-     * @return 查询目标的下标
-     */
-
-    function binarySearch(arr: Array<number>, target: number): number {
-        let start: number = 0; // 当前查询的起始位
-        let end: number = arr.length - 1; // 当前查询的结束位
-        while (start <= end) {
-            let half: number = Math.floor((start + end) / 2); // 查询的中间位次
-            if (arr[half] == target) {
-                return half
-            } else if (arr[half] > target) {
-                end = half - 1;
-            } else {
-                start = half + 1;
-            }
-        }
-        return -1
-    }
 
 </script>
 
@@ -109,6 +88,5 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        background-color: aqua;
     }
 </style>

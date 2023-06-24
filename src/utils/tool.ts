@@ -24,7 +24,7 @@
      * @return 查询目标的下标
      */
 
-function binarySearch(arr: Array<number>, target: number): number {
+export function binarySearch(arr: Array<number>, target: number): number {
 	let start: number = 0; // 当前查询的起始位
 	let end: number = arr.length - 1; // 当前查询的结束位
 	while (start <= end) {

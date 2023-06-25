@@ -5,6 +5,9 @@
 
         <button @click="getDevice">获取设备信息</button>
 
+        <button @click="addDevice">添加设备信息</button>
+
+        
     </div>
 </template>
 
@@ -39,6 +42,18 @@
     function getDevice(){
         CreateRequest('GET', '/get/getDeviceInfo').then(res => {
             console.log(res)
+        })
+    }
+
+    function addDevice(){
+        CreateRequest('POST', '/post/addDevice', {
+            deviceId: '1234',
+            deviceName: '测试设备2',
+            online: 0,
+            created_at: '2023-6-25 10:00:00',
+        }).then(res =>{
+            console.log(res)
+
         })
     }
 </script>

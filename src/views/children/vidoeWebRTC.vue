@@ -27,6 +27,8 @@
     import { formatDate } from '../../utils/tool'
 
 
+    // weuSocket 相关逻辑
+
     const ws = new WebSocket(WEBSOCKET_DOMAIN);
     ws.onopen = () => {
         console.log('WebSocket连接成功');
@@ -42,6 +44,14 @@
         console.log('WebSocket收到信息: ', event);
     };
 
+    function sendMsg(){
+        ws.send('发送测试消息');
+    }
+
+
+
+    // 获取设备相关逻辑，在获取完成当前已经在线的设备信息后，再获取一个未在线的设备信息，作为当前登录者的设备信息
+
     interface IoptionBase {
         id: string;
         label: string;
@@ -56,9 +66,7 @@
     })
 
 
-    function sendMsg(){
-        ws.send('发送测试消息');
-    }
+    
 
     // 获取在线的设备
     function getDevice(){
@@ -72,10 +80,24 @@
                 data.push(temp);
             });
             deviceOption.data = data;
-            console.log(deviceOption)
+            setLocalDevice();
+        })
+    }
+
+    // 设置本地设备信息
+    function setLocalDevice(){
+        CreateRequest('GET', '/get/setLocalDevice').then((res: any) => {
+            console.log('获取本地设备信息', res);
         })
     }
     getDevice();
+
+    
+
+
+    onMounted(() => {
+        window.addEventListener('beforeunload', pageBeforeUnload)
+    })
 
     function editDevice(){
         CreateRequest('POST', '/post/editOnline', {
@@ -85,6 +107,10 @@
         })
     }
 
+    // 项目标签关闭前执行
+    function pageBeforeUnload(){
+        editDevice();
+    }
 </script>
 
 

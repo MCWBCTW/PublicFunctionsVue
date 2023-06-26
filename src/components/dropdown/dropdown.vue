@@ -4,7 +4,8 @@
         'medium',
         'dropdown'
     ]" @click="activeDropdown" @mouseenter="enterDropdown" @mouseleave="outDropDown">
-        <input type="text" v-model="choiceLabel" class="label" @input="labelInput" @blur.stop="labelBlur" @focus.stop="labelFocus">
+        <input type="text" v-model="choiceLabel" :readonly="!query" class="label" :class="[query ? '' : 'query-label']"
+            @input="labelInput" @blur.stop="labelBlur" @focus.stop="labelFocus">
         <div class="iconbox">
             <span v-show="!clear" class="iconfont icon-xiangxia icon-logo" :class="[activeFlag ? 'active-text' : 'static-text']"></span>
 
@@ -35,15 +36,18 @@
         desc?: string;
     }
     const props = defineProps({
-        size: {
-            type: String,
-            default: 'medium'
-        },
+        // 下拉选项
         option: {
             type: Array<Ioption>,
             default: () => []
         },
+        // 是否需要清除已选项功能
         clear: {
+            type: Boolean,
+            default: false,
+        },
+        // 是否需要查询功能
+        query: {
             type: Boolean,
             default: false,
         }
@@ -78,18 +82,17 @@
     let inputBlurFlag: boolean = true;
     // 开启或关闭下拉选项弹窗
     function activeDropdown(){
-        console.log('点击')
-        if (!inputBlurFlag) {
-            activeFlag.value = true;
-        } else if(inputBlurFlag && activeFlag.value) {
+        if(!inputBlurFlag && activeFlag.value) {
             activeFlag.value = !activeFlag.value;
+        } else if (!inputBlurFlag) {
+            activeFlag.value = true;
         }
     }
 
 
     // 输入框输入
     function labelInput(){
-        choiceLabel.value = '';
+            choiceLabel.value = '';
     }
     // 输入框失去焦点
     function labelBlur(){
@@ -98,8 +101,10 @@
     }
     // 输入框聚焦
     function labelFocus(){
-        console.log('聚焦')
-        inputBlurFlag = false;
+        setTimeout(() =>  {
+            // 待打开弹窗后再修改状态，为了规避bug
+            inputBlurFlag = false;
+        }, 100)
         activeFlag.value = true;
     }
 
@@ -152,13 +157,14 @@
         line-height: 35px;
         border-radius: 4px;
         cursor: pointer;
+        outline: none;
+        border: none;
+    }
+    .query-label {
         /* 用以隐藏掉闪烁的光标 */
         color: transparent;
         text-shadow: 0 0 0 #606266;
         /* 颜色透明，以文字阴影实现文字展示 */
-
-        outline: none;
-        border: none;
     }
     .iconbox {
         width: 40px;
@@ -209,7 +215,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding: 6px 10px;
+        padding: 10px 10px;
         box-sizing: border-box;
     }
     .select-line:hover {

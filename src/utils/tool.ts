@@ -17,12 +17,12 @@
 
 
 /**
-     * 二分查找法
-     * 
-     * @param arr 目标数组
-     * @param target 需要查询的目标值
-     * @return 查询目标的下标
-     */
+ * 二分查找法
+ * 
+ * @param arr 目标数组
+ * @param target 需要查询的目标值
+ * @return 查询目标的下标
+ */
 
 export function binarySearch(arr: Array<number>, target: number): number {
 	let start: number = 0; // 当前查询的起始位

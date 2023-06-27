@@ -17,7 +17,7 @@
         </div>
         <div class="select" :class="[activeFlag ? 'show' : 'hidden']">
             <div class="select-box" @click.stop="() => {}">
-                <div class="select-line" v-for="item in props.option" :key="item.id" @click="clickOption(item)">
+                <div class="select-line" v-for="item in props.option" :key="item.id" @click="clickOption(item)" :class="[choiceId == item.id ? 'select-choice-text' : 'select-not-choice-text']">
                     <span class="select-item-left">{{ item.label }}</span>
                     <span class="select-item-right">{{ item.desc }}</span>
                 </div>
@@ -55,8 +55,6 @@
 
     const emit = defineEmits(['choiceOption'])
 
-    // 选中的内容
-    let choiceLabel: Ref<string> = ref('');
     
 
     // 下拉项鼠标移入
@@ -90,9 +88,10 @@
     }
 
 
+
     // 输入框输入
     function labelInput(){
-            choiceLabel.value = '';
+        choiceLabel.value = '';
     }
     // 输入框失去焦点
     function labelBlur(){
@@ -110,11 +109,15 @@
 
 
 
-
+    // 选中的内容
+    let choiceLabel: Ref<string> = ref('');
+    // 选中项的id值
+    let choiceId: Ref<string> = ref('');
 
     // 选择
     function clickOption(item: Ioption) {
         choiceLabel.value = item.label;
+        choiceId.value = item.id;
         activeFlag.value = false;
         emit('choiceOption', item);
     }
@@ -224,12 +227,16 @@
     .select-item-left {
         width: 50%;
         font-size: 14px;
+    }
+    .select-choice-text {
+        color: #409eff;
+    }
+    .select-not-choice-text {
         color: #606266;
     }
     .select-item-right {
         width: 50%;
         font-size: 14px;
-        color: #606266;
         text-align: right;
     }
     .show {

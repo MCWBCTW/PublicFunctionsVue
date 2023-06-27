@@ -2,7 +2,7 @@
     <div class="main flex">
         <div class="menu">
             <div class="menu-item flex flex-a-c flex-j-c" v-for="item in menuArray" :key="item.id" @click="handleChoiceTabs(item)">
-                <span class="menu-item-label">{{ item.label }}</span>
+                <span class="menu-item-label" :class="[item.id == activeChildrenId ? 'active' : 'static']">{{ item.label }}</span>
             </div>
         </div>
         <div class="content flex flex-d-c flex-a-c flex-j-c">
@@ -52,20 +52,22 @@
         },
         {
             path: '/popup',
-            id: 4,
+            id: 5,
             active: false,
             label: '全局弹窗'
         }
     ])
+
+    // 当前激活的子类id
+    let activeChildrenId: Ref<number> = ref(1)
     
     // 点击菜单项回调
     function handleChoiceTabs(item: Imenu){
+        activeChildrenId.value = item.id;
         router.push({ path: item.path})
     }
 
 
-    // 缓存的组件
-    const includeList: Array<string> = ['virtualScrolling'];
 </script>
   
 <style scoped>
@@ -76,6 +78,7 @@
     }
     .menu {
         width: 10%;
+        min-width: 200px;
         height: 100%;
         overflow-y: scroll;
         display: flex;
@@ -95,6 +98,11 @@
     }
     .menu-item-label {
         font-size: 18px;
+    }
+    .active {
+        color: rgb(255, 208, 75);
+    }
+    .static {
         color: #ffffff;
     }
     .content {

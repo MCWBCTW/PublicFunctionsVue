@@ -2,18 +2,22 @@
     <div class="flex">
         <div class="formline">
             <span>选择呼叫对象：</span>
-            <dropdown :size="'mini'" :option="deviceOption.data" :clear="false"></dropdown>
+            <dropdown :option="deviceOption.data" :clear="false"></dropdown>
+            <span class="marL-20">本地设备名称：{{ localDeviceInfo.name }}</span>
         </div>
 
         <div class="content">
-
+            <div class="video-content">
+                <div class="video-local"></div>
+                <div class="video-remote"></div>
+            </div>
         </div>
-
+        <button @click="editDevice">编辑设备在线信息</button>
         <!-- <button @click="sendMsg">发送信息</button>
-
+        
         <button @click="getDevice">获取设备信息</button>
 
-        <button @click="editDevice">编辑设备在线信息</button> -->
+         -->
         
     </div>
 </template>
@@ -23,8 +27,6 @@
     import { WEBSOCKET_DOMAIN } from '../../utils/public'
 
     import { CreateRequest } from '../../utils/request'
-
-    import { formatDate } from '../../utils/tool'
 
 
     // weuSocket 相关逻辑
@@ -65,7 +67,17 @@
         data: []
     })
 
-
+    interface IdeviceInfo {
+        deviceId: string;
+        name: string;
+        id: number
+    }
+    // 本地设备信息
+    let localDeviceInfo: Ref<IdeviceInfo> = ref({
+        deviceId: '',
+        name: '',
+        id: 0,
+    })
     
 
     // 获取在线的设备
@@ -87,7 +99,12 @@
     // 设置本地设备信息
     function setLocalDevice(){
         CreateRequest('GET', '/get/setLocalDevice').then((res: any) => {
-            console.log('获取本地设备信息', res);
+            if (res.data.length > 0) {
+                let info = res.data[0];
+                localDeviceInfo.value.deviceId = info.deviceId;
+                localDeviceInfo.value.name = info.deviceName;
+                localDeviceInfo.value.id = info.id;
+            }
         })
     }
     getDevice();
@@ -96,12 +113,12 @@
 
 
     onMounted(() => {
-        window.addEventListener('beforeunload', pageBeforeUnload)
+        // window.addEventListener('beforeunload', pageBeforeUnload)
     })
 
     function editDevice(){
         CreateRequest('POST', '/post/editOnline', {
-            deviceId: '123'
+            id: 1
         }).then(res => {
             console.log(res)
         })
@@ -127,5 +144,30 @@
         flex-direction: row;
         align-items: center;
         flex-wrap: wrap;
+    }
+    .marL-20 {
+        margin-left: 20px;
+    }
+    .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+    }
+    .video-content {
+        width: 1200px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    .video-local {
+        width: 500px;
+        height: 300px;
+        background-color: red;
+    }
+    .video-remote {
+        width: 500px;
+        height: 300px;
+        background-color: blue;
     }
 </style>

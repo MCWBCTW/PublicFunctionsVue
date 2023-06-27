@@ -9,6 +9,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    CButton: typeof import('./src/components/c-button/c-button.vue')['default']
     Dialog: typeof import('./src/components/dialog/dialog.vue')['default']
     Dropdown: typeof import('./src/components/dropdown/dropdown.vue')['default']
     Message: typeof import('./src/components/message/message.vue')['default']

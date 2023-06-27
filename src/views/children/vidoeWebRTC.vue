@@ -4,6 +4,7 @@
             <span>选择呼叫对象：</span>
             <dropdown :option="deviceOption.data" :clear="false"></dropdown>
             <span class="marL-20">本地设备名称：{{ localDeviceInfo.name }}</span>
+            <c-button :size="'small'" :type="'primary'" class="marL-20">刷新</c-button>
         </div>
 
         <div class="content">
@@ -12,14 +13,15 @@
                 <div class="video-remote"></div>
             </div>
         </div>
-        <button @click="editDevice">编辑设备在线信息</button>
         <!-- <button @click="sendMsg">发送信息</button>
         
         <button @click="getDevice">获取设备信息</button>
 
          -->
         
+         <c-button :size="'small'" :type="''" class="marL-20" @click="editDevice">编辑设备在线信息</c-button>
     </div>
+
 </template>
 
 
@@ -137,6 +139,7 @@
         height: 95vh;
         display: flex;
         flex-direction: column;
+        align-items: start;
     }
     .formline {
         height: 50px;

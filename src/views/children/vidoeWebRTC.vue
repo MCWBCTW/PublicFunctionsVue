@@ -13,11 +13,6 @@
                 <div class="video-remote"></div>
             </div>
         </div>
-        <!-- <button @click="sendMsg">发送信息</button>
-        
-        <button @click="getDevice">获取设备信息</button>
-
-         -->
         
          <c-button :size="'small'" :type="''" class="marL-20" @click="editDevice">编辑设备在线信息</c-button>
     </div>
@@ -115,7 +110,7 @@
 
 
     onMounted(() => {
-        // window.addEventListener('beforeunload', pageBeforeUnload)
+        window.addEventListener('beforeunload', pageBeforeUnload)
     })
 
     function editDevice(){
